@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --breakpoint-xs: 30rem;
+  --breakpoint-2xl: 100rem;
+  --breakpoint-3xl: 120rem;
+}
+
+/* Your global styles or a CSS module */
+.custom-toast {
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 10px 14px;
+  max-width: 80vw;
+  width: fit-content;
+  margin-top: 12px;
+}
+
+.custom-toast-body {
+  display: flex;
+  flex-wrap: wrap;
+  word-break: break-word;
+}
+
+/* Responsive font sizes */
+@media (min-width: 640px) {
+  .custom-toast {
+    font-size: 16px;
+    padding: 14px 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .custom-toast {
+    font-size: 18px;
+    padding: 16px 24px;
+  }
+}
