@@ -13,7 +13,7 @@
 - [📸 Screenshots](#-screenshots)
 - [💡 How to Use](#-how-to-use)
 - [🔧 Installation & Setup](#-installation--setup)
-- [🌱 Future Scope](#-future-scope)
+- [🌱 Future Updates](#-future-updates)
 - [👤 Author & Contact](#-author--contact)
 
 ---
@@ -131,7 +131,7 @@ When students graduate and move to new cities for jobs or higher education, find
 
 ---
 
-## ⚙️ Installation & Setup
+## 🔧 Installation & Setup
 
 ### 0. Prerequisites
 
@@ -139,8 +139,74 @@ When students graduate and move to new cities for jobs or higher education, find
 - MongoDB database
 - Git
 
-### 1. Clone the Repository
+### Backend Setup
+
+#### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/official-tushar/ShareNest.git
 cd ShareNest
+```
+#### 2. Install Backend Dependencies
+
+```bash
+cd server
+npm install
+```
+
+#### 3. Configure Environment Variables
+Create a .env file in the root directory:
+
+```bash
+PORT=7777
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+```
+
+#### 4. Start the Backend Server
+```bash
+npm run dev
+```
+
+### Frontend Setup
+
+#### 1. Navigate to Frontend Directory
+```bash
+cd ..
+cd client
+```
+
+#### 2. Install Frontend Dependencies
+```bash
+npm install
+```
+
+#### 4. Start the Frontend Development Server
+```bash
+npm start
+```
+
+### Note
+Ensure your MongoDB instance is running
+
+---
+
+## 🌱 Future Updates
+- Advanced Matching Algorithm - AI-powered compatibility scoring
+- Video Calling - Integrate video chat for virtual meetings
+- Property Integration - Connect with real estate listings
+- Reviews & Ratings - User feedback system for better trust
+- Advanced Filters - More granular search and filtering options
+- Group Chats - Multi-user chat rooms for shared housing
+- Enhanced Security - Add two-factor authentication
+
+
+---
+
+## 👤 Author & Contact
+**Developer Information**:
+Tushar Srivastava
+
+- **GitHub**: @official-tushar
+- **LinkedIn**: tusharsrivastava8404
+- **Email**: tusharsrivastava8404@gmail.com
