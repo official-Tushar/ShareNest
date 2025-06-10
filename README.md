@@ -172,7 +172,6 @@ npm run dev
 
 #### 1. Navigate to Frontend Directory
 ```bash
-cd ..
 cd client
 ```
 
@@ -183,7 +182,7 @@ npm install
 
 #### 4. Start the Frontend Development Server
 ```bash
-npm start
+npm run dev
 ```
 
 ### Note
