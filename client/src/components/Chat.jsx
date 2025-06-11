@@ -12,9 +12,10 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState("");
   const socketRef = useRef(null);
   const bottomRef = useRef(null);
-  const user = useSelector((store) => store.user);
-
+  const userRaw = useSelector((store) => store.user);
+  const user = userRaw?.data || userRaw;
   const userId = user?._id;
+
 
   const fetchChatMessages = async () => {
     try {
@@ -72,11 +73,12 @@ const Chat = () => {
 
   const sendMessage = () => {
     if (!newMessage.trim()) return;
+    console.log(user);
 
     socketRef.current.emit("sendMessage", {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      photoUrl: user.photoUrl,
+      firstName: user.firstName || user.data.firstName,
+      lastName: user.lastName || user.data.lastName,
+      photoUrl: user.photoUrl || user.data.photoUrl,
       userId,
       targetUserId,
       text: newMessage,
@@ -94,6 +96,14 @@ const Chat = () => {
       sendMessage();
     }
   };
+
+  if (!userId) {
+    return (
+      <div className="flex justify-center items-center h-[70vh]">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-26 mb-8">
