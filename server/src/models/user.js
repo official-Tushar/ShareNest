@@ -72,8 +72,7 @@ const userSchema = mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      default:
-        "https://www.healthatlastusa.com/wp-content/uploads/2023/09/35-350426_profile-icon-png-default-profile-picture-png-transparent.jpg",
+      default: "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?ga=GA1.1.747472938.1741919985&semt=ais_items_boosted&w=740",
       validate(value) {
         if (!validator.isURL(value)) {
           throw new Error(value + "is not a valid URL");
