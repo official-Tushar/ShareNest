@@ -100,11 +100,15 @@ When students graduate and move to new cities for jobs or higher education, find
 
 ## 📸 Screenshots
 
-> *(Add your app screenshots in the repo and link them here)*
-
-| Home Feed | Profile Page | Chat Window |
-|-----------|--------------|-------------|
-| ![Feed](./screenshots/feed.png) | ![Profile](./screenshots/profile.png) | ![Chat](./screenshots/chat.png) |
+![Sign Up Page](./screenshots/signupPage.png)
+![Login Page](./screenshots/loginPage.png)
+![Edit Profile Page](./screenshots/editProfilePage.png)
+![Feed Page](./screenshots/feedPage.png)
+![Connection Requests Page](./screenshots/connectionRequestsPage.png)
+![Connections Page](./screenshots/connectionsPage.png)
+![Chatting Page](./screenshots/chatPage.png)
+![Responsive Design](./screenshots/responsiveChatPage.png)
+![Page Not Found](./screenshots/404pageNotFound.png)
 
 ---
 
