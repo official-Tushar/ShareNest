@@ -55,7 +55,7 @@ const UserCard = ({ user, isFriend = false, onMessage, onGoBack }) => {
         {about !== "This is the default about of the user" && (
           <p className="text-xs md:text-sm">{about}</p>
         )}
-        {preferences.length > 0 && (
+        {preferences?.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2 justify-center">
             {preferences.map((pref, index) => (
               <button
