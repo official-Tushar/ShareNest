@@ -24,7 +24,12 @@ authRouter.post("/signup", async (req, res) => {
         const token = await savedUser.getJWT();
 
         // add the token to cookie, set the expiry time for cookie and send the response back to the user
-        res.cookie('token', token, {expires: new Date(Date.now() + 24*60*60*1000)});
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,         // Only over HTTPS (required for cross-site cookies)
+            sameSite: 'None',     // Required for cross-site cookies
+            expires: new Date(Date.now() + 24 * 60 * 60 * 1000) // 1 day expiry
+          });
         res.json({message: "User data added successfully", data: {
             _id: savedUser._id,
             firstName: savedUser.firstName,
@@ -56,7 +61,12 @@ authRouter.post("/login", async (req, res) => {
             const token = await user.getJWT();
 
             // add the token to cookie, set the expiry time for cookie and send the response back to the user
-            res.cookie('token', token, {expires: new Date(Date.now() + 24*60*60*1000)});
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: true,         // Only over HTTPS (required for cross-site cookies)
+                sameSite: 'None',     // Required for cross-site cookies
+                expires: new Date(Date.now() + 24 * 60 * 60 * 1000) // 1 day expiry
+              });
             res.json({message: "Logged In successfully", data: {
             _id: user._id,
             firstName: user.firstName,
@@ -84,9 +94,12 @@ authRouter.post("/logout", async (req, res) => {
     if (!token) {
         return res.status(400).send("You are not logged in.");
     }
-    res.cookie('token', null, {
-        expires: new Date(Date.now()),
-    });
+    res.cookie('token', '', {
+        httpOnly: true,
+        secure: true,         // Must match how you set it
+        sameSite: 'None',     // Must match how you set it
+        expires: new Date(0)  // Expire immediately
+      });
     res.send("Logged out successfully");
 });
 
