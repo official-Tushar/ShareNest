@@ -2,51 +2,178 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { addFeed } from "../utils/feedSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import UserCard from "./UserCard";
-import noFeedImage from "../assets/images/no-feed.png"
+import { CiSearch } from "react-icons/ci";
+import noFeedImage from "../assets/images/no-feed.png";
+import { FaLocationDot } from "react-icons/fa6";
 
 const Feed = () => {
   const feed = useSelector((store) => store.feed);
   const dispatch = useDispatch();
 
-  const getFeed = async () => {
-    if (feed && feed.length > 0) return;
+  const [inputValue, setInputValue] = useState(""); // Local input state
+  const [cityFilter, setCityFilter] = useState(""); // Actual filter used
+  const [loading, setLoading] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const getFeed = async (city = "") => {
+    setLoading(true);
     try {
-      const res = await axios.get(BASE_URL + "/user/feed", {
+      const url = city
+        ? `${BASE_URL}/user/feed?city=${encodeURIComponent(city)}`
+        : `${BASE_URL}/user/feed`;
+      const res = await axios.get(url, {
         withCredentials: true,
       });
       dispatch(addFeed(res.data));
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    getFeed();
-  }, []);
+    setCurrentIndex(0);
+  }, [feed, cityFilter]);
+
+  useEffect(() => {
+    getFeed(cityFilter);
+  }, [cityFilter]);
 
   if (!feed) return;
 
-  if (feed.length === 0)
+  if (loading)
     return (
       <div className="flex flex-col mt-8 items-center justify-center w-full h-[100vh]">
-        <img src={noFeedImage} alt="no-feed" className="xl:w-1/5 lg:w-1/4 md:w-1/3 sm:w-3/7 w-1/2 mb-3" />
-        <h1 className="text-sm sm:text-lg md:text-xl font-bold text-white">
-          You are all caught up!
-        </h1>
-        <h2 className="text-gray-200 md:text-lg sm:text-sm text-xs">
-          No new faces for now.
-        </h2>
+        <span className="loading loading-spinner loading-xl"></span>
+        <h1 className="text-lg font-bold text-white">Loading...</h1>
       </div>
     );
 
+  if (feed.length === 0)
+    return (
+      <>
+        <div className="flex justify-center w-full mt-22 mb-2">
+          <input
+            className="border border-gray-400 rounded-l-full pl-4 p-2 italic focus:outline-none focus:ring-0.5 focus:ring-white focus:border-white w-1/4"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            type="text"
+            placeholder="Filter by city"
+          />
+          <button
+            className="border border-gray-400 rounded-r-full justify-items-center bg-base-300 cursor-pointer px-4"
+            onClick={() => setCityFilter(inputValue)}
+          >
+            <CiSearch className="text-3xl" />
+          </button>
+        </div>
+
+        {cityFilter && (
+          <div className="flex justify-center mt-2">
+            <div className="bg-accent text-white font-medium px-3 py-1 rounded-full flex items-center gap-2">
+              <FaLocationDot className="text-white text-sm sm:text-base md:text-lg" />
+              <span className="text-sm sm:text-base md:text-lg">
+                {cityFilter}
+              </span>
+              <button
+                className="text-white text-lg hover:text-gray-300 cursor-pointer"
+                onClick={() => {
+                  setCityFilter("");
+                  setInputValue("");
+                }}
+              >
+                X
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-col mt-8 items-center justify-center w-full h-[100vh]">
+          <img
+            src={noFeedImage}
+            alt="no-feed"
+            className="xl:w-1/5 lg:w-1/4 md:w-1/3 sm:w-3/7 w-1/2 mb-3"
+          />
+          <h1 className="text-sm sm:text-lg md:text-xl font-bold text-white">
+            {cityFilter
+              ? "No profiles found for this city."
+              : "You are all caught up!"}
+          </h1>
+          {!cityFilter && (
+            <h2 className="text-gray-200 md:text-lg sm:text-sm text-xs">
+              No new faces for now.
+            </h2>
+          )}
+        </div>
+      </>
+    );
+
   return (
-    feed && (
-      <div className="mt-26 mb-8 w-9/10 md:w-3/4 lg:w-7/10 mx-auto">
-        <UserCard user={feed[0]} />
+    <>
+      <div className="flex justify-center w-full mt-22 mb-2">
+        <input
+          className="border border-gray-400 rounded-l-full pl-2 p-1 xs:pl-4 xs:p-2 italic focus:outline-none 
+          focus:ring-0.5 focus:ring-white focus:border-white w-1/2 sm:w-1/4 text-xs sm:text-sm md:text-[16px]"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          type="text"
+          placeholder="Filter by city name"
+        />
+        <button
+          className="border border-gray-400 rounded-r-full justify-items-center bg-base-300 cursor-pointer sm:px-4 xs:px-3 px-2"
+          onClick={() => setCityFilter(inputValue)}
+        >
+          <CiSearch className="sm:text-3xl xs:text-2xl text-xl" />
+        </button>
       </div>
-    )
+
+      {cityFilter && (
+        <div className="flex justify-center mt-2">
+          <div className="bg-accent text-white font-medium px-3 py-1 rounded-full flex items-center gap-2">
+            <FaLocationDot className="text-white text-sm sm:text-base md:text-lg" />
+            <span className="text-sm sm:text-base md:text-lg">
+              {cityFilter}
+            </span>
+            <button
+              className="text-white text-lg hover:text-gray-300 cursor-pointer"
+              onClick={() => {
+                setCityFilter("");
+                setInputValue("");
+              }}
+            >
+              X
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-6 mb-8 w-11/12 md:w-3/4 lg:w-4/5 mx-auto">
+        {feed.length > 0 && (
+          <UserCard user={feed[currentIndex]} />
+        )}
+        {feed.length > 1 && (
+          <div className="flex justify-center gap-4 mt-4">
+            <button
+              className="btn"
+              onClick={() => setCurrentIndex(i => Math.max(i - 1, 0))}
+              disabled={currentIndex === 0}
+            >
+              &lt;
+            </button>
+            <button
+              className="btn"
+              onClick={() => setCurrentIndex(i => Math.min(i + 1, feed.length - 1))}
+              disabled={currentIndex === feed.length - 1}
+            >
+              &gt;
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

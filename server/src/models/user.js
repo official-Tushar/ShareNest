@@ -98,14 +98,30 @@ const userSchema = mongoose.Schema(
         message: "Preferences cannot contain more than 10 items.",
       },
     },
+    country: {
+      type: String,
+      trim: true,
+      validate(value) {
+        if (!value || typeof value !== 'string' || value.trim().length === 0) {
+          throw new Error('Country is required and must be a non-empty string.');
+        }
+      },
+    },
+    state: {
+      type: String,
+      trim: true,
+      validate(value) {
+        if (!value || typeof value !== 'string' || value.trim().length === 0) {
+          throw new Error('State is required and must be a non-empty string.');
+        }
+      },
+    },
     city: {
       type: String,
       trim: true,
       validate(value) {
-        if (!validator.isLength(value, { min: 3, max: 50 })) {
-          throw new Error(
-            "City name can not have more than 50 characters."
-          );
+        if (!value || typeof value !== 'string' || value.trim().length === 0) {
+          throw new Error('City is required and must be a non-empty string.');
         }
       },
     },

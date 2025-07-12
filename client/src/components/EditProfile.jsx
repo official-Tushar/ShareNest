@@ -1,44 +1,113 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UserCard from "./UserCard";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { Country, State, City } from "country-state-city";
 
 const EditProfile = ({ user }) => {
-  const [firstName, setFirstName] = useState(user.firstName || user?.data?.firstName);
-  const [lastName, setLastName] = useState(user.lastName || user?.data?.lastName);
-  const [photoUrl, setPhotoUrl] = useState(user.photoUrl || user?.data?.photoUrl);
+  console.log("[EditProfile] user prop on mount:", user);
+  const [firstName, setFirstName] = useState(
+    user.firstName || user?.data?.firstName
+  );
+  const [lastName, setLastName] = useState(
+    user.lastName || user?.data?.lastName
+  );
+  const [photoUrl, setPhotoUrl] = useState(
+    user.photoUrl || user?.data?.photoUrl
+  );
   const [gender, setGender] = useState(user.gender || user?.data?.gender || "");
   const [age, setAge] = useState(user.age || user?.data?.age || "");
   const [about, setAbout] = useState(user.about || user?.data?.about || "");
   const [preferenceInput, setPreferenceInput] = useState("");
-  const [preferences, setPreferences] = useState(user.preferences || user?.data?.preferences || []);
+  const [preferences, setPreferences] = useState(
+    user.preferences || user?.data?.preferences || []
+  );
   const [city, setCity] = useState(user.city || user?.data?.city || "");
+  const [country, setCountry] = useState(
+    user.country || user?.data?.country || ""
+  );
+  const [state, setState] = useState(user.state || user?.data?.state || "");
   const [error, setError] = useState("");
   const [showToast, setShowToast] = useState(false);
   const dispatch = useDispatch();
 
+  // State for dropdown lists
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+
+  // Load countries on mount
+  useEffect(() => {
+    setCountries(Country.getAllCountries());
+  }, []);
+
+  // Load states when country changes
+  useEffect(() => {
+    if (country) {
+      const fetchedStates = State.getStatesOfCountry(country);
+      setStates(fetchedStates);
+
+      // Only set state if not already set
+      if (!state && user?.state) {
+        setState(user.state);
+      }
+    } else {
+      setStates([]);
+      setState("");
+      setCities([]);
+      setCity("");
+    }
+  }, [country]);
+
+  // Load cities when state changes
+  useEffect(() => {
+    if (state) {
+      const fetchedCities = City.getCitiesOfState(country, state);
+      setCities(fetchedCities);
+
+      // Only set city if not already set
+      if (!city && user?.city) {
+        setCity(user.city);
+      }
+    } else {
+      setCities([]);
+      setCity("");
+    }
+  }, [state, country]);
+
   const updateProfile = async () => {
     setError("");
     try {
-      const res = await axios.patch(
-        BASE_URL + "/profile/edit",
-        {
-          photoUrl,
-          ...(age !== "" && { age: Number(age) }),
-          gender,
-          about,
-          preferences,
-          city,
-        },
-        { withCredentials: true }
+      const payload = {
+        photoUrl,
+        ...(age !== "" && { age: Number(age) }),
+        gender,
+        about,
+        preferences,
+        country,
+        state,
+        city,
+      };
+      console.log(
+        "[EditProfile] Sending PATCH /profile/edit with payload:",
+        payload
+      );
+
+      const res = await axios.patch(BASE_URL + "/profile/edit", payload, {
+        withCredentials: true,
+      });
+      console.log(
+        "[EditProfile] Response from PATCH /profile/edit:",
+        res?.data
       );
       dispatch(addUser(res?.data));
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
       setError(error?.response?.data || "Something went wrong");
+      console.error("Error updating profile:", error?.response?.data || error);
     }
   };
 
@@ -81,9 +150,10 @@ const EditProfile = ({ user }) => {
             </h2>
 
             <div className="flex flex-wrap justify-between sm:px-10 px-5">
-
               <fieldset className="fieldset my-1 w-full sm:w-4/9">
-                <legend className="fieldset-legend text-sm sm:text-lg">First Name:</legend>
+                <legend className="fieldset-legend text-sm sm:text-lg">
+                  First Name:
+                </legend>
                 <input
                   type="text"
                   value={firstName}
@@ -94,7 +164,9 @@ const EditProfile = ({ user }) => {
               </fieldset>
 
               <fieldset className="fieldset my-1 w-full sm:w-4/9">
-                <legend className="fieldset-legend text-sm sm:text-lg">Last Name:</legend>
+                <legend className="fieldset-legend text-sm sm:text-lg">
+                  Last Name:
+                </legend>
                 <input
                   type="text"
                   value={lastName}
@@ -105,7 +177,9 @@ const EditProfile = ({ user }) => {
               </fieldset>
 
               <fieldset className="fieldset my-1 w-full">
-                <legend className="fieldset-legend text-sm sm:text-lg">Photo URL:</legend>
+                <legend className="fieldset-legend text-sm sm:text-lg">
+                  Photo URL:
+                </legend>
                 <input
                   type="text"
                   value={photoUrl}
@@ -115,7 +189,9 @@ const EditProfile = ({ user }) => {
               </fieldset>
 
               <fieldset className="fieldset my-1 w-4/9 sm:w-5/19">
-                <legend className="fieldset-legend text-sm sm:text-lg">Gender:</legend>
+                <legend className="fieldset-legend text-sm sm:text-lg">
+                  Gender:
+                </legend>
                 <select
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
@@ -131,7 +207,9 @@ const EditProfile = ({ user }) => {
               </fieldset>
 
               <fieldset className="fieldset my-1 w-4/9 sm:w-4/19">
-                <legend className="fieldset-legend text-sm sm:text-lg">Age:</legend>
+                <legend className="fieldset-legend text-sm sm:text-lg">
+                  Age:
+                </legend>
                 <input
                   type="number"
                   value={age}
@@ -146,17 +224,65 @@ const EditProfile = ({ user }) => {
               </fieldset>
 
               <fieldset className="fieldset my-1 w-full sm:w-7/19">
-                <legend className="fieldset-legend text-sm sm:text-lg">City:</legend>
-                <input
-                  type="text"
+                <legend className="fieldset-legend text-sm sm:text-lg">
+                  Country:
+                </legend>
+                <select
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="select select-bordered w-full"
+                >
+                  <option value="">Select Country</option>
+                  {countries.map((c) => (
+                    <option key={c.isoCode} value={c.isoCode}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </fieldset>
+
+              <fieldset className="fieldset my-1 w-full sm:w-7/19">
+                <legend className="fieldset-legend text-sm sm:text-lg">
+                  State:
+                </legend>
+                <select
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  className="select select-bordered w-full"
+                  disabled={!country}
+                >
+                  <option value="">Select State</option>
+                  {states.map((s) => (
+                    <option key={s.isoCode} value={s.isoCode}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </fieldset>
+
+              <fieldset className="fieldset my-1 w-full sm:w-7/19">
+                <legend className="fieldset-legend text-sm sm:text-lg">
+                  City:
+                </legend>
+                <select
                   value={city}
-                  className="input w-full"
                   onChange={(e) => setCity(e.target.value)}
-                />
+                  className="select select-bordered w-full"
+                  disabled={!state}
+                >
+                  <option value="">Select City</option>
+                  {cities.map((cityObj) => (
+                    <option key={cityObj.name} value={cityObj.name}>
+                      {cityObj.name}
+                    </option>
+                  ))}
+                </select>
               </fieldset>
 
               <fieldset className="fieldset my-1 w-full">
-                <legend className="fieldset-legend text-sm sm:text-lg">About:</legend>
+                <legend className="fieldset-legend text-sm sm:text-lg">
+                  About:
+                </legend>
                 <textarea
                   value={about}
                   className="textarea w-full h-30"
@@ -180,12 +306,12 @@ const EditProfile = ({ user }) => {
                     />
                     <div>
                       <button
-                      className="btn btn-secondary h-fit sm:py-2 py-1 text-xs md:text-sm"
-                      onClick={handleAddPreference}
-                      disabled={preferences.length >= 10}
-                    >
-                      Add
-                    </button>
+                        className="btn btn-secondary h-fit sm:py-2 py-1 text-xs md:text-sm"
+                        onClick={handleAddPreference}
+                        disabled={preferences.length >= 10}
+                      >
+                        Add
+                      </button>
                     </div>
                   </div>
 
@@ -208,7 +334,10 @@ const EditProfile = ({ user }) => {
             {error && <span className="text-red-500 px-10">{error}</span>}
 
             <div className="card-actions justify-center mt-4">
-              <button className="btn btn-primary h-fit py-1 sm:py-2 text-xs md:text-sm" onClick={updateProfile}>
+              <button
+                className="btn btn-primary h-fit py-1 sm:py-2 text-xs md:text-sm"
+                onClick={updateProfile}
+              >
                 Update
               </button>
             </div>

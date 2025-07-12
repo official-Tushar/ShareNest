@@ -1,8 +1,8 @@
 import axios from "axios";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState} from "react";
+import { useDispatch} from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
@@ -18,7 +18,7 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
 
   const handleLogin = async () => {
     try {

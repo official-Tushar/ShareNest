@@ -35,6 +35,8 @@ const validateEditProfileRequest = (req) => {
     "age",
     "about",
     "preferences",
+    "country",
+    "state",
     "city",
   ];
 
@@ -46,7 +48,7 @@ const validateEditProfileRequest = (req) => {
 };
 
 const validateEditProfileData = (req) => {
-  const { photoUrl, gender, age, about, preferences, city } = req.body;
+  const { photoUrl, gender, age, about, preferences, country, state, city } = req.body;
 
   if (photoUrl !== undefined && !validator.isURL(photoUrl)) {
     throw new Error("Invalid photo URL.");
@@ -68,17 +70,34 @@ const validateEditProfileData = (req) => {
       throw new Error("Age must be a number and at least 12.");
     }
   }
+  if (!country) {
+    throw new Error("Country is a required field.");
+  }
+  if (typeof country !== "string" || country.trim().length === 0) {
+    throw new Error("Country must be a non-empty string.");
+  }
+  if (country != undefined && country.length > 100) {
+    throw new Error("Country name cannot exceed 100 characters.");
+  }
+  
+  if (!state) {
+    throw new Error("State is a required field.");
+  }
+  if (typeof state !== "string" || state.trim().length === 0) {
+    throw new Error("State must be a non-empty string.");
+  }
+  if (state != undefined && state.length > 100) {
+    throw new Error("State name cannot exceed 100 characters.");
+  }
+  
   if (!city) {
-    throw new Error("You are required to enter the city name.");
+    throw new Error("City is a required field.");
   }
-  if (city !== undefined && typeof city !== "string") {
-    throw new Error("City must be a string.");
+  if (typeof city !== "string" || city.trim().length === 0) {
+    throw new Error("City must be a non-empty string.");
   }
-
-  if (city !== undefined) {
-    if (city.length > 50) {
-      throw new Error("City name can not have more than 50 characters.");
-    }
+  if (city != undefined && city.length > 100) {
+    throw new Error("City name cannot exceed 100 characters.");
   }
   if (!about) {
     throw new Error(

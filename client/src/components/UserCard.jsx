@@ -33,8 +33,12 @@ const UserCard = ({ user, isFriend = false, onMessage, onGoBack }) => {
 
   return (
     <div className="card sm:card-side bg-base-300 h-full shadow-sm mx-auto w-full">
-      <figure className="p-5 w-full sm:w-9/20 lg:w-1/3">
-        <img src={photoUrl} alt="photo" className="rounded-xl w-full" />
+      <figure className="p-5 w-full sm:w-9/20 lg:w-1/3 aspect-[4/3] overflow-hidden flex items-center justify-center">
+        <img
+          src={photoUrl}
+          alt="photo"
+          className="rounded-xl w-full h-full object-cover"
+        />
       </figure>
       <div className="card-body items-center text-center w-full sm:w-2/5">
         <h2 className="card-title font-bold uppercase text-xl md:text-2xl">
@@ -68,38 +72,38 @@ const UserCard = ({ user, isFriend = false, onMessage, onGoBack }) => {
           </div>
         )}
         <div className="card-actions mt-2">
-        {isFriend ? (
-          <>
-            <button
-              className="btn btn-primary text-xs md:text-sm"
-              onClick={() => onMessage(user._id)}
-            >
-              Message
-            </button>
-            <button
-              className="btn btn-secondary text-xs md:text-sm"
-              onClick={onGoBack}
-            >
-              Go Back
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              className="btn btn-primary text-xs md:text-sm"
-              onClick={() => handleSentRequest("ignored", user._id)}
-            >
-              Ignore
-            </button>
-            <button
-              className="btn btn-secondary text-xs md:text-sm"
-              onClick={() => handleSentRequest("interested", user._id)}
-            >
-              Interested
-            </button>
-          </>
-        )}
-      </div>
+          {isFriend ? (
+            <>
+              <button
+                className="btn btn-primary text-xs md:text-sm"
+                onClick={() => onMessage(user._id)}
+              >
+                Message
+              </button>
+              <button
+                className="btn btn-secondary text-xs md:text-sm"
+                onClick={onGoBack}
+              >
+                Go Back
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className="btn btn-primary text-xs md:text-sm"
+                onClick={() => handleSentRequest("ignored", user._id)}
+              >
+                Ignore
+              </button>
+              <button
+                className="btn btn-secondary text-xs md:text-sm"
+                onClick={() => handleSentRequest("interested", user._id)}
+              >
+                Interested
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

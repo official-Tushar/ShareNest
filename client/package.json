@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.6.1",
     "@tailwindcss/vite": "^4.0.17",
     "axios": "^1.8.4",
+    "country-state-city": "^3.2.1",
     "lucide-react": "^0.510.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -10,6 +10,8 @@ const formatUserResponse = (user) => ({
   photoUrl: user.photoUrl,
   about: user.about,
   preferences: user.preferences,
+  country: user.country,
+  state: user.state,
   city: user.city,
 });
 

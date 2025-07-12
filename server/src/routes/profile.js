@@ -46,6 +46,7 @@ profileRouter.get("/profile/view/:targetUserId", userAuth, async (req, res) => {
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
+    console.log("[profileRouter] GET /profile/view - user:", user);
     res.send(formatUserResponse(user));
   } catch (error) {
     console.error("Profile view error:", error);
@@ -57,22 +58,32 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
 
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
+    console.log("[profileRouter] PATCH /profile/edit - request body:", req.body);
+    console.log("Request body:", req.body);
+
     if (!validateEditProfileRequest(req)) {
+      console.log("validateEditProfileRequest failed");
       throw new Error("Invalid Edit request");
     }
     // Add validation Check for the entered data
-    validateEditProfileData(req);
+    try {
+      validateEditProfileData(req);
+    } catch (validationError) {
+      console.log("validateEditProfileData failed:", validationError.message);
+      throw validationError;
+    }
 
     const loggedInUser = req.user;
     Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
     await loggedInUser.save();
 
-    res.send(formatUserResponse(loggedInUser));
+    const responseUser = formatUserResponse(loggedInUser);
+    console.log("[profileRouter] PATCH /profile/edit - response:", responseUser);
+    res.send(responseUser);
   } catch (err) {
+    console.log("Error in PATCH /profile/edit:", err.message);
     res.status(400).send("ERROR: " + err.message);
   }
 });
-
-// create a profile Router for forgot password
 
 module.exports = profileRouter;

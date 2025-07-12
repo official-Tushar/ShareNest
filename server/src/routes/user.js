@@ -4,7 +4,7 @@ const ConnectionRequest = require("../models/connectionRequest");
 const { User } = require("../models/user");
 const userRouter = express.Router();
 
-const USER_SAFE_DATA = "firstName lastName age gender photoUrl about preferences city";
+const USER_SAFE_DATA = "firstName lastName age gender photoUrl about preferences country state city";
 
 // get all the pending connection request from the logged in User
 userRouter.get("/user/requests/received", userAuth, async(req, res) => {
@@ -13,7 +13,7 @@ userRouter.get("/user/requests/received", userAuth, async(req, res) => {
         const connectionRequests = await ConnectionRequest.find({
             toUserId: loggedInUser._id,
             status: "interested",
-        // }).populate("fromUserId", ["firstName", "lastName", "age", "gender", "photoUrl", "about", "skills"]);
+        // }).populate("fromUserId", ["firstName", "lastName", "age", "gender", "photoUrl", "about", "preferences", "country", "state", "city"]);
         }).populate("fromUserId", USER_SAFE_DATA);
 
         res.json({
@@ -50,12 +50,16 @@ userRouter.get("/user/connections", userAuth, async(req, res) => {
 });
 
 userRouter.get("/user/feed", userAuth, async (req, res) => {
+    console.log("Feed route hit");
     try{
         const loggedInUser = req.user;
         const page = parseInt(req.query.page) || 1;
         let limit = parseInt(req.query.limit) || 10;
         limit = (limit > 50) ? 50 : limit;
         const skip = (page-1)*limit;
+
+        const { city } = req.query;
+        const locationFilter = city ? { city: { $regex: city, $options: "i" } } : {};
 
         const connectionRequests = await ConnectionRequest.find({
             $or: [
@@ -70,10 +74,12 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
             hideUsersFromFeed.add(req.toUserId.toString());
         });
 
+        console.log("City filter:", locationFilter);
         const users = await User.find({
             $and: [
                 {_id: {$nin: Array.from(hideUsersFromFeed)},},
                 {_id: {$ne: loggedInUser._id}},
+                locationFilter
             ]
         }).select(USER_SAFE_DATA).skip(skip).limit(limit);
 

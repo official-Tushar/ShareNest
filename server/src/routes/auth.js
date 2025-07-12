@@ -3,6 +3,7 @@ const authRouter = express.Router();
 const {validateSignUpData, validateLoginData} = require("../utils/Validate");
 const {User} = require("../models/user");
 const bcrypt = require("bcrypt");
+const {formatUserResponse} = require("../utils/FormatUserResponse");
 
 authRouter.post("/signup", async (req, res) => {
     try{
@@ -67,18 +68,8 @@ authRouter.post("/login", async (req, res) => {
                 sameSite: 'None',     // Required for cross-site cookies
                 expires: new Date(Date.now() + 24 * 60 * 60 * 1000) // 1 day expiry
               });
-            res.json({message: "Logged In successfully", data: {
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            emailId: user.emailId,
-            age: user.age,
-            gender: user.gender,
-            photoUrl: user.photoUrl,
-            about: user.about,
-            preferences: user.preferences,
-            city: user.city
-        }});
+            res.json({message: "Logged In successfully", data:
+            formatUserResponse(user)});
         }
         else{
             throw new Error("Invalid Credentials. Please check your email and password.");
