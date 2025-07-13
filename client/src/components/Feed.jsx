@@ -28,14 +28,17 @@ const Feed = () => {
       return;
     }
     const handler = setTimeout(() => {
-      const url = BASE_URL + `/api/city/suggest?q=${encodeURIComponent(inputValue)}`;
+      const url =
+        BASE_URL + `/api/city/suggest?q=${encodeURIComponent(inputValue)}`;
       fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          setCitySuggestions(data.map(c => ({
-            label: `${c.name}`,
-            id: `${c.name}`
-          })));
+        .then((res) => res.json())
+        .then((data) => {
+          setCitySuggestions(
+            data.map((c) => ({
+              label: `${c.name}`,
+              id: `${c.name}`,
+            }))
+          );
         })
         .catch(() => setCitySuggestions([]));
     }, 400); // 400ms debounce
@@ -83,7 +86,7 @@ const Feed = () => {
       <>
         <div className="flex justify-center w-full mt-22 mb-2 relative">
           <input
-            className="border border-gray-400 rounded-l-full pl-2 p-1 italic focus:outline-none focus:ring-0.5 focus:ring-white focus:border-white w-1/2 sm:w-1/4 text-xs sm:text-sm md:text-[16px]"
+            className="border border-gray-400 rounded-l-full sm:p-2 sm:pl-4 pl-2 p-1 italic focus:outline-none focus:ring-0.5 focus:ring-white focus:border-white w-1/2 sm:w-1/4 text-xs sm:text-sm md:text-[16px]"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
@@ -99,13 +102,13 @@ const Feed = () => {
           </button>
 
           {showSuggestions && citySuggestions.length > 0 && (
-            <div className="absolute top-full mt-1 bg-white rounded-md shadow-md w-1/2 sm:w-1/4 z-10">
+            <div className="absolute top-full mt-1 bg-base-300 rounded-md shadow-md w-1/2 sm:w-1/4 z-10">
               <ul>
                 {citySuggestions.map((city) => (
                   <li
                     key={city.id}
-                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                    onClick={() => {
+                    className="text-xs sm:text-sm md:text-[16px] px-2 py-1 sm:px-4 sm:py-2 hover:bg-base-300 cursor-pointer text-white bg-base-200"
+                    onMouseDown={() => {
                       setCityFilter(city.label);
                       setInputValue(city.label);
                       setShowSuggestions(false);
@@ -121,13 +124,13 @@ const Feed = () => {
 
         {cityFilter && (
           <div className="flex justify-center mt-2">
-            <div className="bg-accent text-white font-medium px-3 py-1 rounded-full flex items-center gap-2">
-              <FaLocationDot className="text-white text-sm sm:text-base md:text-lg" />
-              <span className="text-sm sm:text-base md:text-lg">
+            <div className="bg-accent text-white font-medium px-2 py-0.5 sm:px-3 sm:py-1 rounded-full flex items-center gap-2">
+              <FaLocationDot className="text-white text-xs sm:text-sm md:text-[16px]" />
+              <span className="text-xs sm:text-sm md:text-[16px]">
                 {cityFilter}
               </span>
               <button
-                className="text-white text-lg hover:text-gray-300 cursor-pointer"
+                className="text-white text-sm sm:text-lg hover:text-gray-300 cursor-pointer"
                 onClick={() => {
                   setCityFilter("");
                   setInputValue("");
