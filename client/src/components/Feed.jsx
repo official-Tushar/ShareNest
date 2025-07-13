@@ -25,26 +25,22 @@ const Feed = () => {
   useEffect(() => {
     if (!inputValue || inputValue.length < 2) {
       setCitySuggestions([]);
-      console.log('City suggestion: input too short or empty', inputValue);
       return;
     }
-    const url = BASE_URL + `/api/city/suggest?q=${encodeURIComponent(inputValue)}`;
-    console.log('Fetching city suggestions from:', url);
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        console.log('Raw city suggestion response:', data);
-        const suggestions = data.map(c => ({
-          label: `${c.name}`,
-          id: `${c.name}`
-        }));
-        console.log('Mapped city suggestions:', suggestions);
-        setCitySuggestions(suggestions);
-      })
-      .catch((err) => {
-        console.log('City suggestion fetch error:', err);
-        setCitySuggestions([]);
-      });
+    const handler = setTimeout(() => {
+      const url = BASE_URL + `/api/city/suggest?q=${encodeURIComponent(inputValue)}`;
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          setCitySuggestions(data.map(c => ({
+            label: `${c.name}`,
+            id: `${c.name}`
+          })));
+        })
+        .catch(() => setCitySuggestions([]));
+    }, 400); // 400ms debounce
+
+    return () => clearTimeout(handler);
   }, [inputValue]);
 
   const getFeed = async (city = "") => {
