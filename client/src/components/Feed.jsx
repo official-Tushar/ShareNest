@@ -84,7 +84,7 @@ const Feed = () => {
   if (feed.length === 0)
     return (
       <>
-        <div className="flex justify-center w-full mt-22 mb-2 relative">
+        <div className="flex justify-center w-full mt-22 mb-0 relative">
           <input
             className="border border-gray-400 rounded-l-full sm:p-2 sm:pl-4 pl-2 p-1 italic focus:outline-none focus:ring-0.5 focus:ring-white focus:border-white w-1/2 sm:w-1/4 text-xs sm:text-sm md:text-[16px]"
             value={inputValue}
@@ -142,7 +142,7 @@ const Feed = () => {
           </div>
         )}
 
-        <div className="flex flex-col mt-8 items-center justify-center w-full h-[100vh]">
+        <div className="flex flex-col mt-0 items-center justify-center w-full h-[85vh]">
           <img
             src={noFeedImage}
             alt="no-feed"

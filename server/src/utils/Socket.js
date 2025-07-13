@@ -14,7 +14,12 @@ const getSecretRoomId = (userId, targetUserId) => {
 const initializeSocket = (server) => {
   const io = socket(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: [
+        "http://localhost:5173",
+        "https://share-nest-zeta.vercel.app",
+      ],
+      methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 
@@ -49,8 +54,9 @@ const initializeSocket = (server) => {
           });
 
           if (!isConnected) {
-            return res.status(403).json({ error: "You are not connected with this user." });
-
+            return res
+              .status(403)
+              .json({ error: "You are not connected with this user." });
           }
 
           let chat = await Chat.findOne({
