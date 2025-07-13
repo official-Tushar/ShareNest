@@ -2,6 +2,13 @@
 
 **ShareNest** is a comprehensive roommate-finding web application designed to help people—especially recent graduates—find compatible flatmates that match their preferences, location, and lifestyle. Moving to a new city is challenging, and finding the right person to share a space with shouldn't add to the stress.
 
+<p align="center">
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" />
+</p>
+
 ---
 
 ## 📚 Table of Contents
@@ -27,6 +34,7 @@ When students graduate and move to new cities for jobs or higher education, find
 - Build connections through a secure request system
 - Communicate seamlessly with matched roommates
 - Make informed decisions based on comprehensive profiles
+- Filter profiles of the location where you are moving to
 
 ---
 
@@ -56,7 +64,7 @@ When students graduate and move to new cities for jobs or higher education, find
 
 ## 🚀 Live Demo
 
-🌐 [Visit ShareNest Live](https://your-deployed-site-link.com) *(Deployed Link coming soon)*
+🌐 [Visit ShareNest Live](https://share-nest-zeta.vercel.app/)
 
 ---
 
@@ -79,8 +87,10 @@ When students graduate and move to new cities for jobs or higher education, find
 - **Connections Dashboard** - View all your established connections
 
 ### ✅ Feed System
-- Displays a curated list of new users you haven't interacted with yet (no existing connection or pending requests).
-- Built with a pagination-based UI for smoother navigation and performance.
+- **Smart User Suggestions**: Displays a curated list of new users you haven't interacted with—no existing connections or pending requests.
+- **Pagination UI**: Built with pagination to ensure smooth navigation and optimal performance for large datasets.
+- **City-Based Filtering**: Easily filter profiles based on city names.
+- **Autocomplete with Debouncing**: Enhances the user experience with city name suggestions as you type, using debouncing to reduce unnecessary API calls and improve performance.
 
 ### 💬 Real-time Chat
 - **Instant Messaging** - Chat with connected roommates in real-time
@@ -108,6 +118,10 @@ When students graduate and move to new cities for jobs or higher education, find
 ![Edit Profile Page](./screenshots/editProfilePage.png)
 ### **Feed Page**
 ![Feed Page](./screenshots/feedPage.png)
+### **City Autocomplete in Feed**
+![Feed Page](./screenshots/autocomplete.png)
+### **Filter Profiles by city**
+![Feed Page](./screenshots/cityFilter.png)
 ### **Connection Requests Page**
 ![Connection Requests Page](./screenshots/connectionRequestsPage.png)
 ### **Connections Page**
@@ -129,6 +143,7 @@ When students graduate and move to new cities for jobs or higher education, find
 2. **Complete Profile** by adding your details, preferences, and lifestyle information
 3. **Login** and browse the feed for potential flatmates.
 4. To **Discover Roommates** browse through your feed.
+5. Apply **City Filter** to find roommates in specific city.
 5. **Send connection requests** to people you're interested in.
 6. **Accept or reject** requests received.
 7. **Start chatting** with people you’re connected with to explore compatibility further.
@@ -168,7 +183,7 @@ npm install
 ```
 
 #### 3. Configure Environment Variables
-Create a .env file in the root directory:
+Create a .env file in the /server directory:
 
 ```bash
 PORT=7777
@@ -191,6 +206,13 @@ cd client
 #### 2. Install Frontend Dependencies
 ```bash
 npm install
+```
+
+#### 3. Configure Environment Variables
+Create a .env file in the /client directory:
+
+```bash
+VITE_BACKEND_URL=your_backend_url
 ```
 
 #### 4. Start the Frontend Development Server
