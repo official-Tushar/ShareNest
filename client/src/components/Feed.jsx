@@ -17,6 +17,36 @@ const Feed = () => {
   const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const [citySuggestions, setCitySuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Remove allCities and its useEffect
+  // Add backend-driven city suggestion fetching
+  useEffect(() => {
+    if (!inputValue || inputValue.length < 2) {
+      setCitySuggestions([]);
+      console.log('City suggestion: input too short or empty', inputValue);
+      return;
+    }
+    const url = BASE_URL + `/api/city/suggest?q=${encodeURIComponent(inputValue)}`;
+    console.log('Fetching city suggestions from:', url);
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        console.log('Raw city suggestion response:', data);
+        const suggestions = data.map(c => ({
+          label: `${c.name}`,
+          id: `${c.name}`
+        }));
+        console.log('Mapped city suggestions:', suggestions);
+        setCitySuggestions(suggestions);
+      })
+      .catch((err) => {
+        console.log('City suggestion fetch error:', err);
+        setCitySuggestions([]);
+      });
+  }, [inputValue]);
+
   const getFeed = async (city = "") => {
     setLoading(true);
     try {
@@ -55,20 +85,42 @@ const Feed = () => {
   if (feed.length === 0)
     return (
       <>
-        <div className="flex justify-center w-full mt-22 mb-2">
+        <div className="flex justify-center w-full mt-22 mb-2 relative">
           <input
-            className="border border-gray-400 rounded-l-full pl-4 p-2 italic focus:outline-none focus:ring-0.5 focus:ring-white focus:border-white w-1/4"
+            className="border border-gray-400 rounded-l-full pl-2 p-1 italic focus:outline-none focus:ring-0.5 focus:ring-white focus:border-white w-1/2 sm:w-1/4 text-xs sm:text-sm md:text-[16px]"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // allow click selection
             type="text"
-            placeholder="Filter by city"
+            placeholder="Filter by city name"
           />
           <button
-            className="border border-gray-400 rounded-r-full justify-items-center bg-base-300 cursor-pointer px-4"
+            className="border border-gray-400 rounded-r-full justify-items-center bg-base-300 cursor-pointer sm:px-4 xs:px-3 px-2"
             onClick={() => setCityFilter(inputValue)}
           >
-            <CiSearch className="text-3xl" />
+            <CiSearch className="sm:text-3xl xs:text-2xl text-xl" />
           </button>
+
+          {showSuggestions && citySuggestions.length > 0 && (
+            <div className="absolute top-full mt-1 bg-white rounded-md shadow-md w-1/2 sm:w-1/4 z-10">
+              <ul>
+                {citySuggestions.map((city) => (
+                  <li
+                    key={city.id}
+                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() => {
+                      setCityFilter(city.label);
+                      setInputValue(city.label);
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    {city.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {cityFilter && (
@@ -113,12 +165,13 @@ const Feed = () => {
 
   return (
     <>
-      <div className="flex justify-center w-full mt-22 mb-2">
+      <div className="flex justify-center w-full mt-22 mb-2 relative">
         <input
-          className="border border-gray-400 rounded-l-full pl-2 p-1 xs:pl-4 xs:p-2 italic focus:outline-none 
-          focus:ring-0.5 focus:ring-white focus:border-white w-1/2 sm:w-1/4 text-xs sm:text-sm md:text-[16px]"
+          className="border border-gray-400 rounded-l-full sm:p-2 sm:pl-4 pl-2 p-1 italic focus:outline-none focus:ring-0.5 focus:ring-white focus:border-white w-1/2 sm:w-1/4 text-xs sm:text-sm md:text-[16px]"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          onFocus={() => setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // allow click selection
           type="text"
           placeholder="Filter by city name"
         />
@@ -128,17 +181,37 @@ const Feed = () => {
         >
           <CiSearch className="sm:text-3xl xs:text-2xl text-xl" />
         </button>
+
+        {showSuggestions && citySuggestions.length > 0 && (
+          <div className="absolute top-full mt-1 bg-base-300 rounded-md shadow-md w-1/2 sm:w-1/4 z-10">
+            <ul>
+              {citySuggestions.map((city) => (
+                <li
+                  key={city.id}
+                  className="text-xs sm:text-sm md:text-[16px] px-2 py-1 sm:px-4 sm:py-2 hover:bg-base-300 cursor-pointer text-white bg-base-200"
+                  onMouseDown={() => {
+                    setCityFilter(city.label);
+                    setInputValue(city.label);
+                    setShowSuggestions(false);
+                  }}
+                >
+                  {city.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       {cityFilter && (
         <div className="flex justify-center mt-2">
-          <div className="bg-accent text-white font-medium px-3 py-1 rounded-full flex items-center gap-2">
-            <FaLocationDot className="text-white text-sm sm:text-base md:text-lg" />
-            <span className="text-sm sm:text-base md:text-lg">
+          <div className="bg-accent text-white font-medium px-2 py-0.5 sm:px-3 sm:py-1 rounded-full flex items-center gap-2">
+            <FaLocationDot className="text-white text-xs sm:text-sm md:text-[16px]" />
+            <span className="text-xs sm:text-sm md:text-[16px]">
               {cityFilter}
             </span>
             <button
-              className="text-white text-lg hover:text-gray-300 cursor-pointer"
+              className="text-white text-sm sm:text-lg hover:text-gray-300 cursor-pointer"
               onClick={() => {
                 setCityFilter("");
                 setInputValue("");
@@ -151,21 +224,21 @@ const Feed = () => {
       )}
 
       <div className="mt-6 mb-8 w-11/12 md:w-3/4 lg:w-4/5 mx-auto">
-        {feed.length > 0 && (
-          <UserCard user={feed[currentIndex]} />
-        )}
+        {feed.length > 0 && <UserCard user={feed[currentIndex]} />}
         {feed.length > 1 && (
           <div className="flex justify-center gap-4 mt-4">
             <button
               className="btn"
-              onClick={() => setCurrentIndex(i => Math.max(i - 1, 0))}
+              onClick={() => setCurrentIndex((i) => Math.max(i - 1, 0))}
               disabled={currentIndex === 0}
             >
               &lt;
             </button>
             <button
               className="btn"
-              onClick={() => setCurrentIndex(i => Math.min(i + 1, feed.length - 1))}
+              onClick={() =>
+                setCurrentIndex((i) => Math.min(i + 1, feed.length - 1))
+              }
               disabled={currentIndex === feed.length - 1}
             >
               &gt;
