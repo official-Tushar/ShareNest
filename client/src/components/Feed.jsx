@@ -15,10 +15,16 @@ const Feed = () => {
   const [inputValue, setInputValue] = useState(""); // Local input state
   const [cityFilter, setCityFilter] = useState(""); // Actual filter used
   const [loading, setLoading] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const [citySuggestions, setCitySuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [currentChunk, setCurrentChunk] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [page, setPage] = useState(1);
+  const [isLastChunk, setIsLastChunk] = useState(false);
+  const [pendingPage, setPendingPage] = useState(null);
+  // const [navDirection, setNavDirection] = useState("forward");
+  const limit = 5;
 
   // Remove allCities and its useEffect
   // Add backend-driven city suggestion fetching
@@ -46,32 +52,68 @@ const Feed = () => {
     return () => clearTimeout(handler);
   }, [inputValue]);
 
-  const getFeed = async (city = "") => {
+  const getFeedChunk = async (
+    city = "",
+    pageNum = 1,
+    direction = "forward"
+  ) => {
     setLoading(true);
     try {
       const url = city
-        ? `${BASE_URL}/user/feed?city=${encodeURIComponent(city)}`
-        : `${BASE_URL}/user/feed`;
-      const res = await axios.get(url, {
-        withCredentials: true,
-      });
-      dispatch(addFeed(res.data));
+        ? `${BASE_URL}/user/feed?city=${encodeURIComponent(
+            city
+          )}&page=${pageNum}&limit=${limit}`
+        : `${BASE_URL}/user/feed?page=${pageNum}&limit=${limit}`;
+      const res = await axios.get(url, { withCredentials: true });
+      if (res.data.length > 0) {
+        setCurrentChunk(res.data);
+        setIsLastChunk(res.data.length < limit);
+        if (direction === "backward") {
+          setCurrentIndex(res.data.length - 1);
+        } else {
+          setCurrentIndex(0);
+        }
+        setPage(pageNum);
+        dispatch(addFeed(res.data));
+      } else if (direction === "forward") {
+        setIsLastChunk(true);
+      }
     } catch (err) {
       console.log(err);
     } finally {
       setLoading(false);
+      setPendingPage(null);
     }
   };
 
   useEffect(() => {
-    setCurrentIndex(0);
-  }, [feed, cityFilter]);
-
-  useEffect(() => {
-    getFeed(cityFilter);
+    setPage(1); // Always reset page to 1
+    // setNavDirection("forward"); // Always reset direction to forward
+    getFeedChunk(cityFilter, 1, "forward");
+    // eslint-disable-next-line
   }, [cityFilter]);
 
-  if (!feed) return;
+  const handleNext = () => {
+    if (currentIndex < currentChunk.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else if (!isLastChunk && !pendingPage) {
+      setPendingPage(page + 1);
+      // setNavDirection("forward");
+      // Do NOT setPage here!
+      getFeedChunk(cityFilter, page + 1, "forward");
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    } else if (page > 1 && !pendingPage) {
+      setPendingPage(page - 1);
+      // setNavDirection("backward");
+      // Do NOT setPage here!
+      getFeedChunk(cityFilter, page - 1, "backward");
+    }
+  };
 
   if (loading)
     return (
@@ -81,7 +123,9 @@ const Feed = () => {
       </div>
     );
 
-  if (feed.length === 0)
+  if (!feed) return;
+
+  if (currentChunk.length === 0 && page === 1 && !loading)
     return (
       <>
         <div className="flex justify-center w-full mt-22 mb-0 relative">
@@ -96,7 +140,9 @@ const Feed = () => {
           />
           <button
             className="border border-gray-400 rounded-r-full justify-items-center bg-base-300 cursor-pointer sm:px-4 xs:px-3 px-2"
-            onClick={() => setCityFilter(inputValue)}
+            onClick={() => {
+              setCityFilter(inputValue);
+            }}
           >
             <CiSearch className="sm:text-3xl xs:text-2xl text-xl" />
           </button>
@@ -223,22 +269,22 @@ const Feed = () => {
       )}
 
       <div className="mt-6 mb-8 w-11/12 md:w-3/4 lg:w-4/5 mx-auto">
-        {feed.length > 0 && <UserCard user={feed[currentIndex]} />}
-        {feed.length > 1 && (
+        {currentChunk.length > 0 && (
+          <UserCard user={currentChunk[currentIndex]} />
+        )}
+        {currentChunk.length > 0 && (
           <div className="flex justify-center gap-4 mt-4">
             <button
               className="btn"
-              onClick={() => setCurrentIndex((i) => Math.max(i - 1, 0))}
-              disabled={currentIndex === 0}
+              onClick={handlePrev}
+              disabled={page === 1 && currentIndex === 0}
             >
               &lt;
             </button>
             <button
               className="btn"
-              onClick={() =>
-                setCurrentIndex((i) => Math.min(i + 1, feed.length - 1))
-              }
-              disabled={currentIndex === feed.length - 1}
+              onClick={handleNext}
+              disabled={isLastChunk && currentIndex === currentChunk.length - 1}
             >
               &gt;
             </button>
