@@ -75,8 +75,11 @@ const Feed = () => {
         }
         setPage(pageNum);
         dispatch(addFeed(res.data));
-      } else if (direction === "forward") {
+      } else {
+        setCurrentChunk([]);
         setIsLastChunk(true);
+        setCurrentIndex(0);
+        setPage(pageNum);
       }
     } catch (err) {
       console.log(err);
