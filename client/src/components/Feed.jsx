@@ -144,7 +144,7 @@ const Feed = () => {
           <button
             className="border border-gray-400 rounded-r-full justify-items-center bg-base-300 cursor-pointer sm:px-4 xs:px-3 px-2"
             onClick={() => {
-              setCityFilter(inputValue);
+              setCityFilter(inputValue.trim());
             }}
           >
             <CiSearch className="sm:text-3xl xs:text-2xl text-xl" />
@@ -158,8 +158,8 @@ const Feed = () => {
                     key={city.id}
                     className="text-xs sm:text-sm md:text-[16px] px-2 py-1 sm:px-4 sm:py-2 hover:bg-base-300 cursor-pointer text-white bg-base-200"
                     onMouseDown={() => {
-                      setCityFilter(city.label);
-                      setInputValue(city.label);
+                      setCityFilter(city.label.trim());
+                      setInputValue(city.label.trim());
                       setShowSuggestions(false);
                     }}
                   >
@@ -225,7 +225,7 @@ const Feed = () => {
         />
         <button
           className="border border-gray-400 rounded-r-full justify-items-center bg-base-300 cursor-pointer sm:px-4 xs:px-3 px-2"
-          onClick={() => setCityFilter(inputValue)}
+          onClick={() => setCityFilter(inputValue.trim())}
         >
           <CiSearch className="sm:text-3xl xs:text-2xl text-xl" />
         </button>
@@ -238,8 +238,8 @@ const Feed = () => {
                   key={city.id}
                   className="text-xs sm:text-sm md:text-[16px] px-2 py-1 sm:px-4 sm:py-2 hover:bg-base-300 cursor-pointer text-white bg-base-200"
                   onMouseDown={() => {
-                    setCityFilter(city.label);
-                    setInputValue(city.label);
+                    setCityFilter(city.label.trim());
+                    setInputValue(city.label.trim());
                     setShowSuggestions(false);
                   }}
                 >
