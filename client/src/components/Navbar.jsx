@@ -29,8 +29,8 @@ const Navbar = () => {
     <div className="navbar bg-base-300 shadow-sm fixed top-0 z-10">
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost">
-          <img src="/logo-SplitNest.png" alt="logo" className="hidden sm:inline md:w-55 md:h-10 sm:w-44 sm:h-8"/>
-          <img src="/logo-SplitNest-sm.png" alt="sm-logo" className="inline sm:hidden h-7/8"/>
+          <img src="/logo-ShareNest.png" alt="logo" className="hidden sm:inline md:w-55 md:h-10 sm:w-44 sm:h-8"/>
+          <img src="/logo-ShareNest-sm.png" alt="sm-logo" className="inline sm:hidden h-7/8"/>
         </Link>
       </div>
 
