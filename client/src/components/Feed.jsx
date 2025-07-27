@@ -76,10 +76,12 @@ const Feed = () => {
         setPage(pageNum);
         dispatch(addFeed(res.data));
       } else {
-        setCurrentChunk([]);
         setIsLastChunk(true);
-        setCurrentIndex(0);
-        setPage(pageNum);
+        if (pageNum === 1) {
+          setCurrentChunk([]);
+          setCurrentIndex(0);
+          setPage(1);
+        }
       }
     } catch (err) {
       console.log(err);
