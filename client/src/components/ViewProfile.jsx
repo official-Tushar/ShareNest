@@ -56,7 +56,7 @@ const ViewProfile = () => {
   }
 
   return (
-    <div className="mt-24 px-5 max-w-3xl mx-auto mb-8">
+    <div className="mt-24 px-5 max-w-[90%] mx-auto mb-8">
       <h1 className="text-center text:xl md:text-2xl mb-6">
         <span className="italic">Meet</span> <span className="font-semibold">{user.firstName} {user.lastName} </span>
       </h1>

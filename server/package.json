@@ -1,17 +1,20 @@
 {
   "name": "share-nest",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "find the roommate of your match",
-  "main": "index.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
   "keywords": [
     "nodejs",
-    "javascript"
+    "javascript",
+    "expressjs"
   ],
-  "author": "",
+  "author": {
+    "name": "Tushar Srivastava",
+    "email": "tusharsrivastava8404@email.com"
+  },
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -23,5 +26,8 @@
     "mongoose": "^8.12.1",
     "socket.io": "^4.8.1",
     "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
